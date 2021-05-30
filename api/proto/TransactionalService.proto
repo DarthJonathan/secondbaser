@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package id.lovtalk.posts.service.api;
+
+option go_package = "github.com/darthjonathan/secondbaser/api/go_gen/api;api";
+
+import "google/protobuf/timestamp.proto";
+
+service TransacactionalService {
+
+
+}
+
+message TransactionRequest {
+    string transactionId = 1;
+}
+
+message TransactionResponse {
+    string transactionStatus = 1;
+    google.protobuf.Timestamp transactionStart = 2;
+}
