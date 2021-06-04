@@ -2,16 +2,17 @@ package config
 
 import (
 	"flag"
+	"github.com/DarthJonathan/secondbaser/config/application"
+	"github.com/DarthJonathan/secondbaser/config/grpcserver"
+	"github.com/DarthJonathan/secondbaser/config/migrations"
 
 	"github.com/tkanos/gonfig"
-	"github.com/trakkie-id/trakkie-member/config/conf"
-	"github.com/trakkie-id/trakkie-member/config/grpcserver"
 	"golang.org/x/sync/errgroup"
 )
 
 func RunServer() error {
 	var configFile string
-	var cfg conf.Config
+	var cfg Config
 
 	flag.StringVar(&configFile, "config-file", "./config/conf/development.json", "Application configuration file")
 	flag.Parse()
@@ -21,11 +22,8 @@ func RunServer() error {
 	//Setup Logger
 	application.SetUpLogger(cfg.LogLevel, application.AppName)
 
-	//Override Config Info
-	application.OverrideEnvVars(&cfg)
-
 	//Print config info
-	application.LOGGER.DebugF("Loaded application configuration file, application configuration : %s", cfg)
+	application.LOGGER.DebugF("Loaded application configuration, application configuration : %s", cfg)
 
 	if err != nil {
 		panic(err)
@@ -34,14 +32,17 @@ func RunServer() error {
 	//Init App Env
 	application.InitAppEnv(cfg.ApplicationEnv)
 
-	//Init client address
-	application.InitClients(cfg.ClientAddress)
-
 	//Init Database
 	application.InitDatabase(cfg.DBUser, cfg.DBPassword, cfg.DBDatabase, cfg.DBHost, cfg.DBPort)
 
+	//Migrate Database
+	migrations.MigrateDatabase()
+
 	//Init Tracer
 	application.InitZipkinTracer(cfg.GRPCPort, cfg.ZipkinEndpoint)
+
+	//Init Kafka
+	application.KafkaBroker = cfg.KafkaBrokerAddress
 
 	//Use Error Group for Threads
 	g := new(errgroup.Group)

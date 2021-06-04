@@ -6,16 +6,26 @@ option go_package = "github.com/darthjonathan/secondbaser/api/go_gen/api;api";
 
 import "google/protobuf/timestamp.proto";
 
-service TransacactionalService {
+service TransactionalRequest {
+    rpc StartTransaction(TransactionRequest) returns (TransactionResponse);
+    rpc RegisterParticipant(TransactionRequest) returns (TransactionResponse);
+    rpc QueryTransactionStatus(TransactionRequest) returns (TransactionResponse);
 
-
+    rpc CommitTransaction(TransactionRequest) returns (TransactionResponse);
+    rpc RollbackTransaction(TransactionRequest) returns (TransactionResponse);
 }
 
 message TransactionRequest {
     string transactionId = 1;
+    string initSystem = 2;
+    string participantSystem = 3;
+    google.protobuf.Timestamp transactionStart = 4;
+    bool success = 5;
 }
 
 message TransactionResponse {
     string transactionStatus = 1;
     google.protobuf.Timestamp transactionStart = 2;
+    string transactionId = 3;
+    string initSystem = 4;
 }

@@ -1,4 +1,4 @@
-package config
+package conf
 
 type Config struct {
 	DBHost string `json:"DB_HOST"`
@@ -15,11 +15,19 @@ type Config struct {
 
 	HTTPPort string `json:"HTTP_PORT"`
 
+	RedisPassword string `json:"REDIS_PASSWORD"`
+
+	RedisHost string `json:"REDIS_HOST"`
+
 	ZipkinEndpoint string `json:"ZIPKIN_ENDPOINT"`
 
 	ApplicationEnv string `json:"APP_ENV"`
 
+	ApplicationName string `json:"APPLICATION_NAME"`
+
 	KafkaBrokerAddress string `json:"KAFKA_BROKER_ADDRESS"`
+
+	ClientAddress map[string]string `json:"CLIENT_ADDRESS"`
 
 	LogLevel string `json:"LOG_LEVEL"`
 }

@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/DarthJonathan/secondbaser/config"
 	"os"
 
-	"github.com/darthjonathan/secondbaser/config"
 )
 
 func main() {
