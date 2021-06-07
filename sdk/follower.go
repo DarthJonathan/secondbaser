@@ -27,7 +27,7 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 		return errors.New("unable to get metadata from context")
 	}
 
-	trxContextGroup := metaDataCtx["SECONDBASER-BIZ-TRX-CONTEXT"]
+	trxContextGroup := metaDataCtx["secondbaser-biz-trx-context"]
 	if trxContextGroup == nil || len(trxContextGroup) < 1 || trxContextGroup[0] == ""  {
 		LOGGER.Debugf("Metadata payload : [%+v]", metaDataCtx)
 		return errors.New("unable to get business transaction context from context")

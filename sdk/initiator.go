@@ -33,7 +33,7 @@ func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType
 
 	bizCtxJson,_ := json.Marshal(bizCtx)
 	bizAddedCtx := metadata.AppendToOutgoingContext(
-		ctx, "SECONDBASER-BIZ-TRX-CONTEXT", string(bizCtxJson),
+		ctx, "secondbaser-biz-trx-context", string(bizCtxJson),
 	)
 
 	notifyServerStart(bizAddedCtx, *bizCtx)
