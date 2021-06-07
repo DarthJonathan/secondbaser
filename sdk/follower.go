@@ -72,6 +72,8 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 }
 
 func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext BusinessTransactionContext) error, forward func(bizContext BusinessTransactionContext) error) {
+	LOGGER.Debugf("[KAFKA] Waiting for final phase [Topic : %s]", topic)
+
 	// make a new reader that consumes from topic-A
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{KafkaAddress},
