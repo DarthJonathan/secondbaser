@@ -2,9 +2,9 @@ package config
 
 import (
 	"flag"
-	"github.com/DarthJonathan/secondbaser/config/application"
-	"github.com/DarthJonathan/secondbaser/config/grpcserver"
-	"github.com/DarthJonathan/secondbaser/config/migrations"
+	"github.com/trakkie-id/secondbaser/config/application"
+	"github.com/trakkie-id/secondbaser/config/grpcserver"
+	"github.com/trakkie-id/secondbaser/config/migrations"
 
 	"github.com/tkanos/gonfig"
 	"golang.org/x/sync/errgroup"

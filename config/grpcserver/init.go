@@ -2,9 +2,9 @@ package grpcserver
 
 import (
 	"context"
-	api "github.com/DarthJonathan/secondbaser/api/go_gen"
-	"github.com/DarthJonathan/secondbaser/config/application"
-	"github.com/DarthJonathan/secondbaser/service"
+	api "github.com/trakkie-id/secondbaser/api/go_gen"
+	"github.com/trakkie-id/secondbaser/config/application"
+	"github.com/trakkie-id/secondbaser/service"
 	"net"
 	"os"
 	"os/signal"

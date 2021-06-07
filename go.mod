@@ -1,4 +1,4 @@
-module github.com/DarthJonathan/secondbaser
+module github.com/trakkie-id/secondbaser
 
 go 1.16
 

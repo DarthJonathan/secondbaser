@@ -2,14 +2,14 @@ package service
 
 import (
 	"context"
-	"github.com/DarthJonathan/secondbaser/config/application"
+	"github.com/trakkie-id/secondbaser/config/application"
 	"github.com/openzipkin/zipkin-go"
 	"github.com/segmentio/kafka-go"
 )
 
 func PublishMessage(context context.Context, topic string, payload []byte) error {
 	//Try create topic first
-	_, err := kafka.DialLeader(context, "tcp", "localhost:9092", topic, 0)
+	_, err := kafka.DialLeader(context, "tcp", application.KafkaBroker, topic, 0)
 	if err != nil {
 		application.LOGGER.Errorf("failed to create topic: %s", err)
 		return err

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/DarthJonathan/secondbaser/config"
+	"github.com/trakkie-id/secondbaser/config"
 	"os"
 
 )

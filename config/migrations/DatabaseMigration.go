@@ -1,8 +1,8 @@
 package migrations
 
 import (
-	"github.com/DarthJonathan/secondbaser/config/application"
-	"github.com/DarthJonathan/secondbaser/model"
+	"github.com/trakkie-id/secondbaser/config/application"
+	"github.com/trakkie-id/secondbaser/model"
 )
 
 func MigrateDatabase() {

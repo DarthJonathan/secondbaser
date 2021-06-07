@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package id.secondbaser.service.api;
 
-option go_package = "github.com/darthjonathan/secondbaser/api/go_gen/api;api";
+option go_package = "github.com/trakkie-id/secondbaser/api/go_gen/api;api";
 
 import "google/protobuf/timestamp.proto";
 

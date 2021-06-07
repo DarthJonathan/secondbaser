@@ -3,7 +3,7 @@ package sdk
 import (
 	"context"
 	"fmt"
-	api "github.com/DarthJonathan/secondbaser/api/go_gen"
+	api "github.com/trakkie-id/secondbaser/api/go_gen"
 	"github.com/hashicorp/go-uuid"
 	"github.com/openzipkin/zipkin-go"
 	"google.golang.org/protobuf/types/known/timestamppb"

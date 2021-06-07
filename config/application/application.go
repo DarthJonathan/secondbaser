@@ -1,7 +1,7 @@
 package application
 
 import (
-	"github.com/DarthJonathan/secondbaser/config/logging"
+	"github.com/trakkie-id/secondbaser/config/logging"
 	"net/http"
 	"os"
 	"strings"

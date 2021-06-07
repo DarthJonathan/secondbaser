@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/DarthJonathan/secondbaser/model"
 	"github.com/openzipkin/zipkin-go"
 	zipkinModel "github.com/openzipkin/zipkin-go/model"
 	"github.com/segmentio/kafka-go"
+	"github.com/trakkie-id/secondbaser/model"
 	"gorm.io/gorm"
 	"strconv"
 )
@@ -52,7 +52,7 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 	//Load kafka
 	bizContextChan := make(chan BusinessTransactionContext)
 	topic := SECONDBASER_PREFIX_TOPIC + businessTrxContext.BusinessType + businessTrxContext.Initiator
-	go listenToKafkaMsg(topic, bizContextChan)
+	go listenToKafkaMsg(topic, businessTrxContext.TransactionId, bizContextChan)
 
 	//Wait for biz context result
 	bizContext := <- bizContextChan
@@ -92,7 +92,7 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 	return err
 }
 
-func listenToKafkaMsg(topic string, bizContext chan BusinessTransactionContext) {
+func listenToKafkaMsg(topic string, trxId string, bizContext chan BusinessTransactionContext) {
 	// make a new reader that consumes from topic-A
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:   []string{KafkaAddress},
@@ -108,7 +108,6 @@ func listenToKafkaMsg(topic string, bizContext chan BusinessTransactionContext) 
 			LOGGER.Errorf("[KAFKA] Unable to close reader, err : %+v", err)
 			break
 		}
-		LOGGER.Infof("[KAFKA] Received SECONDBASER Phase Two Message [Topic : %s, Payload: %+v]", m.Topic, string(m.Value))
 
 		trxContext := &BusinessTransactionContext{}
 		err = json.Unmarshal(m.Value, trxContext)
@@ -116,6 +115,14 @@ func listenToKafkaMsg(topic string, bizContext chan BusinessTransactionContext) 
 		if err != nil {
 			LOGGER.Errorf("[KAFKA] Unable to parse payload, err : %+v", err)
 		}
+
+		//Validate same trx id
+		if trxId != trxContext.TransactionId {
+			LOGGER.Debugf("[KAFKA] Skipping message, trx id not matched! trx id : %v", trxContext.TransactionId)
+			return
+		}
+
+		LOGGER.Infof("[KAFKA] Received SECONDBASER Phase Two Message [Topic : %s, Payload: %+v]", m.Topic, string(m.Value))
 
 		traceId := ""
 		spanId := ""

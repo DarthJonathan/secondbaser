@@ -2,10 +2,10 @@ package sdk
 
 import (
 	"database/sql"
-	"github.com/DarthJonathan/secondbaser/config/logging"
-	"github.com/DarthJonathan/secondbaser/model"
 	"github.com/apsdehal/go-logger"
 	"github.com/openzipkin/zipkin-go"
+	"github.com/trakkie-id/secondbaser/config/logging"
+	"github.com/trakkie-id/secondbaser/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	gorm_logger "gorm.io/gorm/logger"
