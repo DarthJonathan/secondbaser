@@ -136,7 +136,7 @@ func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext Busin
 
 		if bizContext.ActionType == ACTION_TYPE_COMMIT {
 			//Update to db
-			resErr := DB.Model(trxFollowerDO).Updates(model.TransactionParticipant{
+			resErr := DB.Where(&model.TransactionParticipant{TransactionId: trxFollowerDO.TransactionId}).Updates(model.TransactionParticipant{
 				ParticipantStatus: model.TRX_COMMIT,
 			})
 
@@ -147,7 +147,7 @@ func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext Busin
 			err = forward(*bizContext)
 		} else {
 			//Update to db
-			resErr := DB.Model(trxFollowerDO).Updates(model.TransactionParticipant{
+			resErr := DB.Where(&model.TransactionParticipant{TransactionId: trxFollowerDO.TransactionId}).Updates(model.TransactionParticipant{
 				ParticipantStatus: model.TRX_ROLLBACK,
 			})
 
