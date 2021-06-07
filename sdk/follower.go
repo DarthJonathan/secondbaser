@@ -165,6 +165,7 @@ func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext Busin
 		//Finish 2nd Span
 		LOGGER.Infof("SECONDBASER Phase two finished with final status %v, and transaction ID : %s", bizContext.ActionType, bizContext.TransactionId)
 		span.Finish()
+		break
 	}
 
 	if err := r.Close(); err != nil {

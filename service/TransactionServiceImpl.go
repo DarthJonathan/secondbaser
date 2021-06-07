@@ -135,7 +135,7 @@ func (t transactionServiceImpl) CommitTransaction(ctx context.Context, request *
 	}
 
 	//Publish Trx for client
-	topic := sdk.SECONDBASER_PREFIX_TOPIC + trx.BusinessType + "_" + trx.BusinessId
+	topic := sdk.SECONDBASER_PREFIX_TOPIC + trx.BusinessType + "_" + trx.InitiatorSystem
 
 	bizCtx := &sdk.BusinessTransactionContext{
 		Initiator:       trx.InitiatorSystem,
@@ -214,7 +214,7 @@ func (t transactionServiceImpl) RollbackTransaction(ctx context.Context, request
 	}
 
 	bizCtxJson,_ := json.Marshal(bizCtx)
-	topic := sdk.SECONDBASER_PREFIX_TOPIC + request.BizType + request.InitSystem
+	topic := sdk.SECONDBASER_PREFIX_TOPIC + trx.BusinessType + "_" + trx.InitiatorSystem
 	_ = PublishMessage(ctx, topic, bizCtxJson)
 
 	application.LOGGER.Infof("Commit transaction finished")
