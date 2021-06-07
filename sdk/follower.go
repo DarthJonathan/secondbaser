@@ -65,7 +65,7 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 	span.Finish()
 
 	//Load kafka
-	topic := SECONDBASER_PREFIX_TOPIC + businessTrxContext.BusinessType + businessTrxContext.Initiator
+	topic := SECONDBASER_PREFIX_TOPIC + businessTrxContext.BusinessType + "_" + businessTrxContext.Initiator
 	go listenToKafkaMsg(topic, businessTrxContext.TransactionId, rollback, forward)
 
 	return err

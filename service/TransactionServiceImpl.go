@@ -135,7 +135,7 @@ func (t transactionServiceImpl) CommitTransaction(ctx context.Context, request *
 	}
 
 	//Publish Trx for client
-	topic := sdk.SECONDBASER_PREFIX_TOPIC + request.BizType + request.InitSystem
+	topic := sdk.SECONDBASER_PREFIX_TOPIC + trx.BusinessType + "_" + trx.BusinessId
 
 	bizCtx := &sdk.BusinessTransactionContext{
 		Initiator:       trx.InitiatorSystem,
