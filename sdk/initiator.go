@@ -2,10 +2,12 @@ package sdk
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	api "github.com/trakkie-id/secondbaser/api/go_gen"
 	"github.com/hashicorp/go-uuid"
 	"github.com/openzipkin/zipkin-go"
+	api "github.com/trakkie-id/secondbaser/api/go_gen"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
@@ -29,7 +31,10 @@ func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType
 		ActionType:      "INIT",
 	}
 
-	bizAddedCtx := context.WithValue(ctx, "SECONDBASER-BIZ-TRX-CONTEXT", bizCtx)
+	bizCtxJson,_ := json.Marshal(bizCtx)
+	bizAddedCtx := metadata.AppendToOutgoingContext(
+		ctx, "SECONDBASER-BIZ-TRX-CONTEXT", string(bizCtxJson),
+	)
 
 	notifyServerStart(bizAddedCtx, *bizCtx)
 	processErr := process(bizAddedCtx)

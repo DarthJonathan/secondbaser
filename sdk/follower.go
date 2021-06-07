@@ -9,6 +9,7 @@ import (
 	zipkinModel "github.com/openzipkin/zipkin-go/model"
 	"github.com/segmentio/kafka-go"
 	"github.com/trakkie-id/secondbaser/model"
+	"google.golang.org/grpc/metadata"
 	"gorm.io/gorm"
 	"strconv"
 )
@@ -21,9 +22,21 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 	SetLogFormat(ctx)
 
 	//Load business context from context
-	businessTrxContext := ctx.Value("SECONDBASER-BIZ-TRX-CONTEXT").(*BusinessTransactionContext)
+	metaDataCtx, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return errors.New("unable to get business transaction context from context")
+	}
 
-	if businessTrxContext == nil {
+	trxContextGroup := metaDataCtx["SECONDBASER-BIZ-TRX-CONTEXT"]
+	if trxContextGroup == nil || len(trxContextGroup) > 0 || trxContextGroup[0] == ""  {
+		return errors.New("unable to get business transaction context from context")
+	}
+	trxContext := trxContextGroup[0]
+	businessTrxContext := &BusinessTransactionContext{}
+	err := json.Unmarshal([]byte(trxContext), &businessTrxContext)
+
+	if err != nil  {
+		LOGGER.Errorf("Error in parsing business transaction context data, err : %+v", err)
 		return errors.New("unable to get business transaction context from context")
 	}
 
@@ -56,7 +69,6 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 
 	//Wait for biz context result
 	bizContext := <- bizContextChan
-	var err error
 
 	if bizContext.ActionType == ACTION_TYPE_COMMIT {
 		//Update to db
