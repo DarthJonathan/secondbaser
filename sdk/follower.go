@@ -97,12 +97,6 @@ func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext Busin
 			LOGGER.Errorf("[KAFKA] Unable to parse payload, err : %+v", err)
 		}
 
-		//Validate same trx id
-		if trxId != bizContext.TransactionId {
-			LOGGER.Debugf("[KAFKA] Skipping message, trx id not matched! trx id : %v", bizContext.TransactionId)
-			continue
-		}
-
 		LOGGER.Infof("[KAFKA] Received SECONDBASER Phase Two Message [Topic : %s, Payload: %+v]", m.Topic, string(m.Value))
 
 		traceId := ""
