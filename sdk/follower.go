@@ -28,7 +28,7 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 	}
 
 	trxContextGroup := metaDataCtx["SECONDBASER-BIZ-TRX-CONTEXT"]
-	if trxContextGroup == nil || len(trxContextGroup) > 0 || trxContextGroup[0] == ""  {
+	if trxContextGroup == nil || len(trxContextGroup) < 1 || trxContextGroup[0] == ""  {
 		return errors.New("unable to get business transaction context from context")
 	}
 	trxContext := trxContextGroup[0]
