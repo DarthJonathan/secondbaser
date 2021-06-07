@@ -11,7 +11,7 @@ import (
 )
 
 func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType string, bizId string, process func(injectedContext context.Context) error) error {
-	span, _ := t.StartSpanFromContext(ctx, "Start Secondbaser Follower First Stage")
+	span, _ := t.StartSpanFromContext(ctx, "Start Secondbaser Initiator First Stage")
 	defer span.Finish()
 	span.Tag("SECONDBASER", "First Stage Initiator")
 
