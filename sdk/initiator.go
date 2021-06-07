@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	api "github.com/DarthJonathan/secondbaser/api/go_gen"
-	"github.com/DarthJonathan/secondbaser/config/application"
 	"github.com/hashicorp/go-uuid"
 	"github.com/openzipkin/zipkin-go"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -56,7 +55,7 @@ func notifyServerStart(ctx context.Context, transactionContext BusinessTransacti
 	grpcCon, err := GetConn()
 
 	if err != nil {
-		application.LOGGER.Errorf("[SERVER] failed to connect to server: %s", err)
+		LOGGER.Errorf("[SERVER] failed to connect to server: %s", err)
 	}
 
 	requestParsed := &api.TransactionRequest{
@@ -70,10 +69,10 @@ func notifyServerStart(ctx context.Context, transactionContext BusinessTransacti
 	_, err = client.StartTransaction(ctx, requestParsed)
 
 	if err != nil {
-		application.LOGGER.Errorf("[SERVER] failed to send transaction start message: %s", err)
+		LOGGER.Errorf("[SERVER] failed to send transaction start message: %s", err)
 	}
 
-	application.LOGGER.Infof("[SERVER] notified manager for ongoing transaction: %s", err)
+	LOGGER.Infof("[SERVER] notified manager for ongoing transaction: %s", err)
 	CloseConn(grpcCon)
 }
 
@@ -81,7 +80,7 @@ func notifyServerFinal(ctx context.Context, transactionContext BusinessTransacti
 	grpcCon, err := GetConn()
 
 	if err != nil {
-		application.LOGGER.Errorf("[SERVER] failed to connect to server: %s", err)
+		LOGGER.Errorf("[SERVER] failed to connect to server: %s", err)
 	}
 
 	requestParsed := &api.TransactionRequest{
@@ -99,9 +98,9 @@ func notifyServerFinal(ctx context.Context, transactionContext BusinessTransacti
 	}
 
 	if err != nil {
-		application.LOGGER.Errorf("[SERVER] failed to send transaction final message: %s", err)
+		LOGGER.Errorf("[SERVER] failed to send transaction final message: %s", err)
 	}
 
-	application.LOGGER.Infof("[SERVER] notified manager for finishing transaction: %s", err)
+	LOGGER.Infof("[SERVER] notified manager for finishing transaction: %s", err)
 	CloseConn(grpcCon)
 }

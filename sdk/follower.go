@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/DarthJonathan/secondbaser/config/application"
 	"github.com/DarthJonathan/secondbaser/model"
 	"github.com/openzipkin/zipkin-go"
 	zipkinModel "github.com/openzipkin/zipkin-go/model"
@@ -34,7 +33,7 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 		ParticipantSystem: AppName,
 		ParticipantStatus: model.TRX_INIT,
 	}
-	resErr := application.DB.Create(trxFollowerDO)
+	resErr := DB.Create(trxFollowerDO)
 
 	if resErr.Error != nil && !errors.Is(resErr.Error , gorm.ErrRecordNotFound) {
 		LOGGER.Errorf("Unable to store transaction, err : %+v", resErr.Error)
@@ -61,7 +60,7 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 
 	if bizContext.ActionType == ACTION_TYPE_COMMIT {
 		//Update to db
-		resErr = application.DB.Model(trxFollowerDO).Updates(model.TransactionParticipant{
+		resErr = DB.Model(trxFollowerDO).Updates(model.TransactionParticipant{
 			ParticipantStatus: model.TRX_COMMIT,
 		})
 
@@ -72,7 +71,7 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 		err = forward(bizContext)
 	}else {
 		//Update to db
-		resErr = application.DB.Model(trxFollowerDO).Updates(model.TransactionParticipant{
+		resErr = DB.Model(trxFollowerDO).Updates(model.TransactionParticipant{
 			ParticipantStatus: model.TRX_ROLLBACK,
 		})
 
@@ -138,7 +137,7 @@ func listenToKafkaMsg(topic string, bizContext chan BusinessTransactionContext) 
 		}
 
 		span = TRACER.StartSpan("SECONDBASER Phase 2", zipkin.Parent(spanContext))
-		application.LOGGER.SetFormat("%{time} [%{module}] [%{level}] [" + traceId +  "," + spanId + "]  %{message}")
+		LOGGER.SetFormat("%{time} [%{module}] [%{level}] [" + traceId +  "," + spanId + "]  %{message}")
 		LOGGER.Infof("SECONDBASER Phase Two Message Parse Result [%+v]", m.Topic, string(m.Value))
 
 		bizContext <- *trxContext

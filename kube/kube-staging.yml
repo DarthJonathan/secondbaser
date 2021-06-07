@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: secondbaser
+  namespace: trakkie-staging
+spec:
+  selector:
+    app: secondbaser
+  ports:
+    - name: grpc
+      port: 3030
+    - name: http
+      port: 3050
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secondbaser
+  namespace: trakkie-staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secondbaser
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: '/prometheus'
+        prometheus.io/port: '3050'
+        prometheus.io/scheme: 'http'
+        prometheus.io/scrape: 'true'
+      labels:
+        app: secondbaser
+    spec:
+      containers:
+        - name: secondbaser
+          image: asia.gcr.io/trakkie-id/secondbaser:latest
+          args: ["staging"]
+          ports:
+            - containerPort: 3030
+          env:
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: application-env
+              mountPath: /app/config/conf/staging.json
+              readOnly: true
+              subPath: staging.json
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "150m"
+      volumes:
+        - name: application-env
+          configMap:
+            name: secondbaser-config-map
+      imagePullSecrets:
+        - name: trakkie-secret

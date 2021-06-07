@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: trakkie-orders
+  namespace: trakkie-prod
+spec:
+  selector:
+    app: trakkie-orders
+  ports:
+    - name: grpc
+      port: 3030
+    - name: http
+      port: 3050
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trakkie-orders
+  namespace: trakkie-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trakkie-orders
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: '/actuator/prometheus'
+        prometheus.io/port: '20215'
+        prometheus.io/scheme: 'http'
+        prometheus.io/scrape: 'true'
+      labels:
+        app: trakkie-orders
+    spec:
+      containers:
+        - name: trakkie-orders
+          image: asia.gcr.io/trakkie-id/trakkie_orders:snapshot
+          args: ["production"]
+          ports:
+            - containerPort: 3030
+          env:
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: application-env
+              mountPath: /app/config/conf/production.json
+              readOnly: true
+              subPath: production.json
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "150m"
+      volumes:
+        - name: application-env
+          configMap:
+            name: trakkie-orders-config-map
+      imagePullSecrets:
+        - name: trakkie-secret
