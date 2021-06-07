@@ -12,6 +12,10 @@ type Transaction struct {
 
 	TransactionStatus TransactionStatus `gorm:"trx_status"`
 
+	BusinessId string `json:"business_id"`
+
+	BusinessType string `json:"business_type"`
+
 }
 
 type TransactionStatus string

@@ -8,6 +8,14 @@ import (
 )
 
 func PublishMessage(context context.Context, topic string, payload []byte) error {
+	//Try create topic first
+	_, err := kafka.DialLeader(context, "tcp", "localhost:9092", topic, 0)
+	if err != nil {
+		application.LOGGER.Errorf("failed to create topic: %s", err)
+		return err
+	}
+
+
 	w := &kafka.Writer{
 		Addr:     kafka.TCP(application.KafkaBroker),
 		Topic:    topic,
@@ -32,7 +40,7 @@ func PublishMessage(context context.Context, topic string, payload []byte) error
 		},
 	}
 
-	err := w.WriteMessages(
+	err = w.WriteMessages(
 		context,
 		kafka.Message{
 			Value: payload,

@@ -4,15 +4,12 @@
   "DB_HOST" : "localhost",
   "DB_USER": "root",
   "DB_PASSWORD":"root",
-  "DB_DATABASE" : "trakkie_auth",
+  "DB_DATABASE" : "secondbaser",
   "DB_PORT" : 3306,
   "REDIS_HOST": "localhost",
   "REDIS_PASSWORD": "root",
   "ZIPKIN_ENDPOINT": "http://localhost:9411/api/v2/spans",
   "APP_ENV": "DEV",
   "KAFKA_BROKER_ADDRESS": "localhost:9092",
-  "LOG_LEVEL": "DEBUG",
-  "APPLICATION_NAME": "AUTH",
-  "CLIENT_ADDRESS": {
-  }
+  "LOG_LEVEL": "DEBUG"
 }

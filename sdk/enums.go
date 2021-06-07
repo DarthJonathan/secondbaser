@@ -1,0 +1,10 @@
+package sdk
+
+type ActionType string
+
+var (
+	ACTION_TYPE_COMMIT ActionType = "COMMIT"
+	ACTION_TYPE_ROLLBACK ActionType = "ROLLBACK"
+)
+
+var SECONDBASER_PREFIX_TOPIC = "SECONDBASER_TRANSACTIONAL_"

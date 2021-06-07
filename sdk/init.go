@@ -3,6 +3,7 @@ package sdk
 import (
 	"database/sql"
 	"github.com/DarthJonathan/secondbaser/config/logging"
+	"github.com/DarthJonathan/secondbaser/model"
 	"github.com/apsdehal/go-logger"
 	"github.com/openzipkin/zipkin-go"
 	"gorm.io/driver/mysql"
@@ -15,12 +16,15 @@ import (
 
 var (
 	LOGGER          *logger.Logger
-	AppName 		= "SECONDBASER-CLIENT"
+	AppName 		string
 	TRACER          *zipkin.Tracer
 	DB              *gorm.DB
+	KafkaAddress 	string
+	KafkaGroupId	string
+	Server string
 )
 
-func InitializeSDK(db *sql.DB, tracer *zipkin.Tracer, logLevel string) {
+func InitSecondbaserClient(db *sql.DB, tracer *zipkin.Tracer, logLevel string, kafkaBrokerAddr string, appGroup string, appName string, secondBaserServer string) {
 	//Zipkin
 	TRACER = tracer
 
@@ -31,7 +35,17 @@ func InitializeSDK(db *sql.DB, tracer *zipkin.Tracer, logLevel string) {
 	setupDatabase(db)
 
 	//Setup Kafka
+	KafkaAddress = kafkaBrokerAddr
+	KafkaGroupId = appGroup
 
+	//Setup app name
+	AppName = appName
+
+	//Second Baser Server
+	Server = secondBaserServer
+
+	//Migrate tables
+	_ = DB.AutoMigrate(&model.Transaction{}, &model.TransactionParticipant{})
 }
 
 func setupDatabase(db *sql.DB) {
@@ -61,7 +75,7 @@ func setupDatabase(db *sql.DB) {
 }
 
 func setUpLogger(logLevel string) {
-	LOGGER, _ = logger.New(AppName, 100, os.Stdout)
+	LOGGER, _ = logger.New("SECONDBASER-CLIENT", 100, os.Stdout)
 	LOGGER.SetFormat("%{time} [%{module}] [%{level}] %{message}")
 
 	if strings.EqualFold(logLevel, "DEBUG") {
@@ -69,8 +83,4 @@ func setUpLogger(logLevel string) {
 	} else {
 		LOGGER.SetLogLevel(logger.InfoLevel)
 	}
-}
-
-func setupKafka() {
-
 }

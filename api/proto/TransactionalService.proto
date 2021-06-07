@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package id.lovtalk.posts.service.api;
+package id.secondbaser.service.api;
 
 option go_package = "github.com/darthjonathan/secondbaser/api/go_gen/api;api";
 
@@ -21,6 +21,8 @@ message TransactionRequest {
     string participantSystem = 3;
     google.protobuf.Timestamp transactionStart = 4;
     bool success = 5;
+    string bizType = 6;
+    string bizId = 7;
 }
 
 message TransactionResponse {

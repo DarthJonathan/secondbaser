@@ -35,7 +35,7 @@ func NewTransactionalRequestClient(cc grpc.ClientConnInterface) TransactionalReq
 
 func (c *transactionalRequestClient) StartTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error) {
 	out := new(TransactionResponse)
-	err := c.cc.Invoke(ctx, "/id.lovtalk.posts.service.api.TransactionalRequest/StartTransaction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/id.secondbaser.service.api.TransactionalRequest/StartTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (c *transactionalRequestClient) StartTransaction(ctx context.Context, in *T
 
 func (c *transactionalRequestClient) RegisterParticipant(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error) {
 	out := new(TransactionResponse)
-	err := c.cc.Invoke(ctx, "/id.lovtalk.posts.service.api.TransactionalRequest/RegisterParticipant", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/id.secondbaser.service.api.TransactionalRequest/RegisterParticipant", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (c *transactionalRequestClient) RegisterParticipant(ctx context.Context, in
 
 func (c *transactionalRequestClient) QueryTransactionStatus(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error) {
 	out := new(TransactionResponse)
-	err := c.cc.Invoke(ctx, "/id.lovtalk.posts.service.api.TransactionalRequest/QueryTransactionStatus", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/id.secondbaser.service.api.TransactionalRequest/QueryTransactionStatus", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *transactionalRequestClient) QueryTransactionStatus(ctx context.Context,
 
 func (c *transactionalRequestClient) CommitTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error) {
 	out := new(TransactionResponse)
-	err := c.cc.Invoke(ctx, "/id.lovtalk.posts.service.api.TransactionalRequest/CommitTransaction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/id.secondbaser.service.api.TransactionalRequest/CommitTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *transactionalRequestClient) CommitTransaction(ctx context.Context, in *
 
 func (c *transactionalRequestClient) RollbackTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error) {
 	out := new(TransactionResponse)
-	err := c.cc.Invoke(ctx, "/id.lovtalk.posts.service.api.TransactionalRequest/RollbackTransaction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/id.secondbaser.service.api.TransactionalRequest/RollbackTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func _TransactionalRequest_StartTransaction_Handler(srv interface{}, ctx context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/id.lovtalk.posts.service.api.TransactionalRequest/StartTransaction",
+		FullMethod: "/id.secondbaser.service.api.TransactionalRequest/StartTransaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionalRequestServer).StartTransaction(ctx, req.(*TransactionRequest))
@@ -148,7 +148,7 @@ func _TransactionalRequest_RegisterParticipant_Handler(srv interface{}, ctx cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/id.lovtalk.posts.service.api.TransactionalRequest/RegisterParticipant",
+		FullMethod: "/id.secondbaser.service.api.TransactionalRequest/RegisterParticipant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionalRequestServer).RegisterParticipant(ctx, req.(*TransactionRequest))
@@ -166,7 +166,7 @@ func _TransactionalRequest_QueryTransactionStatus_Handler(srv interface{}, ctx c
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/id.lovtalk.posts.service.api.TransactionalRequest/QueryTransactionStatus",
+		FullMethod: "/id.secondbaser.service.api.TransactionalRequest/QueryTransactionStatus",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionalRequestServer).QueryTransactionStatus(ctx, req.(*TransactionRequest))
@@ -184,7 +184,7 @@ func _TransactionalRequest_CommitTransaction_Handler(srv interface{}, ctx contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/id.lovtalk.posts.service.api.TransactionalRequest/CommitTransaction",
+		FullMethod: "/id.secondbaser.service.api.TransactionalRequest/CommitTransaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionalRequestServer).CommitTransaction(ctx, req.(*TransactionRequest))
@@ -202,7 +202,7 @@ func _TransactionalRequest_RollbackTransaction_Handler(srv interface{}, ctx cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/id.lovtalk.posts.service.api.TransactionalRequest/RollbackTransaction",
+		FullMethod: "/id.secondbaser.service.api.TransactionalRequest/RollbackTransaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionalRequestServer).RollbackTransaction(ctx, req.(*TransactionRequest))
@@ -214,7 +214,7 @@ func _TransactionalRequest_RollbackTransaction_Handler(srv interface{}, ctx cont
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TransactionalRequest_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "id.lovtalk.posts.service.api.TransactionalRequest",
+	ServiceName: "id.secondbaser.service.api.TransactionalRequest",
 	HandlerType: (*TransactionalRequestServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
