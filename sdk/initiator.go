@@ -63,6 +63,8 @@ func notifyServerStart(ctx context.Context, transactionContext BusinessTransacti
 		InitSystem:        transactionContext.Initiator,
 		TransactionStart:  timestamppb.New(time.Now()),
 		Success:           false,
+		BizId: 			   transactionContext.BusinessId,
+		BizType: 		   transactionContext.BusinessType,
 	}
 
 	client := api.NewTransactionalRequestClient(grpcCon)
