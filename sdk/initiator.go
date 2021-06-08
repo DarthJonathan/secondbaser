@@ -40,13 +40,19 @@ func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType
 	processErr := process(bizAddedCtx)
 	bizCtx.FinishPhaseTime = time.Now()
 
+	//Generate new context for asynchronous processing
+	asyncContext := metadata.AppendToOutgoingContext(
+		context.Background(), "secondbaser-biz-trx-context", string(bizCtxJson),
+	)
+	asyncContext = zipkin.NewContext(asyncContext, zipkin.SpanFromContext(ctx))
+
 	if processErr != nil {
 		span.Tag(string(zipkin.TagError), fmt.Sprint(processErr))
 
 		//Do rollback to clients async
 		go func() {
 			bizCtx.ActionType = ACTION_TYPE_ROLLBACK
-			notifyServerFinal(bizAddedCtx, *bizCtx)
+			notifyServerFinal(asyncContext, *bizCtx)
 		}()
 		return processErr
 	}
@@ -54,7 +60,7 @@ func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType
 	//Do commit to clients async
 	go func() {
 		bizCtx.ActionType = ACTION_TYPE_COMMIT
-		notifyServerFinal(bizAddedCtx, *bizCtx)
+		notifyServerFinal(asyncContext, *bizCtx)
 	}()
 
 	return nil
@@ -83,7 +89,7 @@ func notifyServerStart(ctx context.Context, transactionContext BusinessTransacti
 		LOGGER.Errorf("[SERVER] failed to send transaction start message: %s", err)
 	}
 
-	LOGGER.Infof("[SERVER] notified manager for ongoing transaction: %s", err)
+	LOGGER.Infof("[SERVER] notified manager for ongoing transaction, trx id : %s", transactionContext.TransactionId)
 	CloseConn(grpcCon)
 }
 
@@ -112,6 +118,6 @@ func notifyServerFinal(ctx context.Context, transactionContext BusinessTransacti
 		LOGGER.Errorf("[SERVER] failed to send transaction final message: %s", err)
 	}
 
-	LOGGER.Infof("[SERVER] notified manager for finishing transaction: %s", err)
+	LOGGER.Infof("[SERVER] notified manager for ongoing transaction, status : %s, trx id : %s", transactionContext.ActionType, transactionContext.TransactionId)
 	CloseConn(grpcCon)
 }
