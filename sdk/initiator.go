@@ -43,15 +43,19 @@ func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType
 	if processErr != nil {
 		span.Tag(string(zipkin.TagError), fmt.Sprint(processErr))
 
-		//Do rollback to clients
-		bizCtx.ActionType = ACTION_TYPE_ROLLBACK
-		notifyServerFinal(bizAddedCtx, *bizCtx)
+		//Do rollback to clients async
+		go func() {
+			bizCtx.ActionType = ACTION_TYPE_ROLLBACK
+			notifyServerFinal(bizAddedCtx, *bizCtx)
+		}()
 		return processErr
 	}
 
-	//Do commit to clients
-	bizCtx.ActionType = ACTION_TYPE_COMMIT
-	notifyServerFinal(bizAddedCtx, *bizCtx)
+	//Do commit to clients async
+	go func() {
+		bizCtx.ActionType = ACTION_TYPE_COMMIT
+		notifyServerFinal(bizAddedCtx, *bizCtx)
+	}()
 
 	return nil
 }
