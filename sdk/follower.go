@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
-
 	"github.com/openzipkin/zipkin-go"
 	zipkinModel "github.com/openzipkin/zipkin-go/model"
 	"github.com/segmentio/kafka-go"
+	api "github.com/trakkie-id/secondbaser/api/go_gen"
 	"github.com/trakkie-id/secondbaser/model"
 	"google.golang.org/grpc/metadata"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 var span zipkin.Span
@@ -53,6 +53,11 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 	if resErr.Error != nil && !errors.Is(resErr.Error, gorm.ErrRecordNotFound) {
 		LOGGER.Errorf("Unable to store transaction, err : %+v", resErr.Error)
 	}
+
+	//Register to manager
+	go func() {
+		notifyServerRegister(ctx, *businessTrxContext)
+	}()
 
 	processErr := process()
 
@@ -165,4 +170,27 @@ func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext Busin
 	if err := r.Close(); err != nil {
 		LOGGER.Errorf("Unable to close reader, err : %+v", err)
 	}
+}
+
+func notifyServerRegister(ctx context.Context, transactionContext BusinessTransactionContext) {
+	grpcCon, err := GetConn()
+
+	if err != nil {
+		LOGGER.Errorf("[SERVER] failed to connect to server: %s", err)
+	}
+
+	requestParsed := &api.TransactionRequest{
+		TransactionId:     transactionContext.TransactionId,
+		ParticipantSystem: AppName,
+	}
+
+	client := api.NewTransactionalRequestClient(grpcCon)
+	_, err = client.RegisterParticipant(ctx, requestParsed)
+
+	if err != nil {
+		LOGGER.Errorf("[SERVER] failed to send transaction follow message: %s", err)
+	}
+
+	LOGGER.Infof("[SERVER] notified manager for following ongoing transaction, trx id : %s", transactionContext.TransactionId)
+	CloseConn(grpcCon)
 }

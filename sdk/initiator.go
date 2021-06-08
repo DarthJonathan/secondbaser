@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/go-uuid"
 	"github.com/openzipkin/zipkin-go"
 	api "github.com/trakkie-id/secondbaser/api/go_gen"
+	"github.com/trakkie-id/secondbaser/model"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
@@ -36,6 +37,19 @@ func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType
 		ctx, "secondbaser-biz-trx-context", string(bizCtxJson),
 	)
 
+	//Store to DB
+	go func() {
+		transactionParent := &model.Transaction{
+			TransactionId:     trxId,
+			InitiatorSystem:   AppName,
+			TransactionStatus: model.TRX_INIT,
+			BusinessId:        bizId,
+			BusinessType:      businessType,
+		}
+
+		DB.Create(transactionParent)
+	}()
+
 	notifyServerStart(bizAddedCtx, *bizCtx)
 	processErr := process(bizAddedCtx)
 	bizCtx.FinishPhaseTime = time.Now()
@@ -53,6 +67,12 @@ func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType
 		go func() {
 			bizCtx.ActionType = ACTION_TYPE_ROLLBACK
 			notifyServerFinal(asyncContext, *bizCtx)
+
+			//Update database
+			DB.Where(&model.Transaction{TransactionId: trxId}).Updates(
+				&model.Transaction{
+					TransactionStatus: model.TRX_COMMIT,
+				})
 		}()
 		return processErr
 	}
@@ -61,6 +81,12 @@ func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType
 	go func() {
 		bizCtx.ActionType = ACTION_TYPE_COMMIT
 		notifyServerFinal(asyncContext, *bizCtx)
+
+		//Update database
+		DB.Where(&model.Transaction{TransactionId: trxId}).Updates(
+			&model.Transaction{
+				TransactionStatus: model.TRX_COMMIT,
+			})
 	}()
 
 	return nil
