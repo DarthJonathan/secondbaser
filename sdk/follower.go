@@ -6,13 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/openzipkin/zipkin-go"
-	zipkinModel "github.com/openzipkin/zipkin-go/model"
 	"github.com/segmentio/kafka-go"
+	kafka_zipkin_interceptor "github.com/trakkie-id/kafka-zipkin-interceptor"
 	api "github.com/trakkie-id/secondbaser/api/go_gen"
 	"github.com/trakkie-id/secondbaser/model"
 	"google.golang.org/grpc/metadata"
 	"gorm.io/gorm"
-	"strconv"
 )
 
 var span zipkin.Span
@@ -104,26 +103,12 @@ func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext Busin
 
 		LOGGER.Infof("[KAFKA] Received SECONDBASER Phase Two Message [Topic : %s, Payload: %+v]", m.Topic, string(m.Value))
 
-		traceId := ""
-		spanId := ""
+		ctx := kafka_zipkin_interceptor.ExtractTraceInfo(context.Background(), m, "", topic, AppName, KafkaGroupId, TRACER)
 
-		for _, header := range m.Headers {
-			if header.Key == "X-B3-TraceId" {
-				traceId = string(header.Value)
-			} else if header.Key == "X-B3-SpanId" {
-				spanId = string(header.Value)
-			}
-		}
+		spanId := zipkin.SpanFromContext(ctx).Context().ID.String()
+		traceId := zipkin.SpanFromContext(ctx).Context().TraceID.String()
 
-		unitSpanId, _ := strconv.ParseUint(spanId, 0, 64)
-		traceIdModel, _ := zipkinModel.TraceIDFromHex(traceId)
-
-		spanContext := zipkinModel.SpanContext{
-			TraceID: traceIdModel,
-			ID:      zipkinModel.ID(unitSpanId),
-		}
-
-		span = TRACER.StartSpan("SECONDBASER Phase 2", zipkin.Parent(spanContext))
+		span,_ = TRACER.StartSpanFromContext(ctx, "SECONDBASER Phase 2")
 		LOGGER.SetFormat("%{time} [%{module}] [%{level}] [" + traceId + "," + spanId + "]  %{message}")
 		LOGGER.Infof("SECONDBASER Phase Two Message Parse Result [%+v]", m.Topic, string(m.Value))
 

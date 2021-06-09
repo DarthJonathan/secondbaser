@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"github.com/trakkie-id/secondbaser/config/application"
-	"github.com/openzipkin/zipkin-go"
 	"github.com/segmentio/kafka-go"
+	kafka_zipkin_interceptor "github.com/trakkie-id/kafka-zipkin-interceptor"
+	"github.com/trakkie-id/secondbaser/config/application"
 )
 
 func PublishMessage(context context.Context, topic string, payload []byte) error {
@@ -15,6 +15,8 @@ func PublishMessage(context context.Context, topic string, payload []byte) error
 		return err
 	}
 
+	//Put tracing data
+	headers, ctx := kafka_zipkin_interceptor.WrapInSpan("", topic, "","", context, application.TRACER)
 
 	w := &kafka.Writer{
 		Addr:     kafka.TCP(application.KafkaBroker),
@@ -22,26 +24,8 @@ func PublishMessage(context context.Context, topic string, payload []byte) error
 		Balancer: &kafka.LeastBytes{},
 	}
 
-	//Put tracing data
-	spanID := zipkin.SpanFromContext(context).Context().ID.String()
-	traceID := zipkin.SpanFromContext(context).Context().TraceID.String()
-	headers := []kafka.Header{
-		{
-			Key:   "X-B3-TraceId",
-			Value: []byte(traceID),
-		},
-		{
-			Key:   "X-B3-SpanId",
-			Value: []byte(spanID),
-		},
-		{
-			Key:   "X-B3-Sampled",
-			Value: []byte("1"),
-		},
-	}
-
 	err = w.WriteMessages(
-		context,
+		ctx,
 		kafka.Message{
 			Value: payload,
 			Headers: headers,
