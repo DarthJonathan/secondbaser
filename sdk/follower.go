@@ -103,12 +103,12 @@ func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext Busin
 
 		LOGGER.Infof("[KAFKA] Received SECONDBASER Phase Two Message [Topic : %s, Payload: %+v]", m.Topic, string(m.Value))
 
-		ctx := kafka_zipkin_interceptor.ExtractTraceInfo(context.Background(), m, "", topic, AppName, KafkaGroupId, TRACER)
+		spanParent := kafka_zipkin_interceptor.ExtractTraceInfo(m, "", topic, AppName, KafkaGroupId, TRACER)
 
-		spanId := zipkin.SpanFromContext(ctx).Context().ID.String()
-		traceId := zipkin.SpanFromContext(ctx).Context().TraceID.String()
+		spanId := spanParent.Context().ID.String()
+		traceId := spanParent.Context().TraceID.String()
 
-		span,_ = TRACER.StartSpanFromContext(ctx, "SECONDBASER Phase 2")
+		span = TRACER.StartSpan("SECONDBASER Phase 2", zipkin.Parent(spanParent.Context()))
 		LOGGER.SetFormat("%{time} [%{module}] [%{level}] [" + traceId + "," + spanId + "]  %{message}")
 		LOGGER.Infof("SECONDBASER Phase Two Message Parse Result [%+v]", m.Topic, string(m.Value))
 

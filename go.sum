@@ -379,6 +379,8 @@ github.com/trakkie-id/kafka-zipkin-interceptor v0.0.0-20210609191930-3ccb75ad5d9
 github.com/trakkie-id/kafka-zipkin-interceptor v0.0.0-20210609191930-3ccb75ad5d98/go.mod h1:UjnCUIjGR+jvRF88o7bPv4QpkbiECb8R6NYB1dg++ko=
 github.com/trakkie-id/kafka-zipkin-interceptor v0.0.0-20210609200929-76338159b930 h1:W6V7DtWT+jazbVQnmF7H7as6gCckMcg1guGGjE34J+w=
 github.com/trakkie-id/kafka-zipkin-interceptor v0.0.0-20210609200929-76338159b930/go.mod h1:UjnCUIjGR+jvRF88o7bPv4QpkbiECb8R6NYB1dg++ko=
+github.com/trakkie-id/kafka-zipkin-interceptor v0.0.0-20210609204035-83b7b67da2ae h1:9vBk5ZMNOqAlAFYPKBSkOdr+s0Y2r1W3+P/N0wftFJM=
+github.com/trakkie-id/kafka-zipkin-interceptor v0.0.0-20210609204035-83b7b67da2ae/go.mod h1:UjnCUIjGR+jvRF88o7bPv4QpkbiECb8R6NYB1dg++ko=
 github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
 github.com/urfave/cli v1.22.1/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=
 github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c/go.mod h1:lB8K/P019DLNhemzwFU4jHLhdvlE6uDZjXFejJXr49I=
