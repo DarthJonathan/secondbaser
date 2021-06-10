@@ -152,7 +152,7 @@ func listenToKafkaMsg(ctx context.Context, topic string, trxId string, rollback 
 		LOGGER.Infof("SECONDBASER Phase two finished with final status %v, and transaction ID : %s", bizContext.ActionType, bizContext.TransactionId)
 		span.Finish()
 
-		if r.Lag() < 1 {
+		if trxId == trxFollowerDO.TransactionId {
 			break
 		}
 	}
