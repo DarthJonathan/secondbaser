@@ -86,6 +86,7 @@ func listenToKafkaMsg(ctx context.Context, topic string, trxId string, rollback 
 		Topic:    topic,
 		MinBytes: 10e3, // 10KB
 		MaxBytes: 10e6, // 10MB
+
 	})
 
 	for {
@@ -150,7 +151,10 @@ func listenToKafkaMsg(ctx context.Context, topic string, trxId string, rollback 
 		//Finish 2nd Span
 		LOGGER.Infof("SECONDBASER Phase two finished with final status %v, and transaction ID : %s", bizContext.ActionType, bizContext.TransactionId)
 		span.Finish()
-		break
+
+		if r.Lag() < 1 {
+			break
+		}
 	}
 
 	if err := r.Close(); err != nil {
