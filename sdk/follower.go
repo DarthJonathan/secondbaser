@@ -17,16 +17,16 @@ import (
 var span zipkin.Span
 
 func FollowTransactionTemplate(ctx context.Context, process func() error, rollback func(bizContext BusinessTransactionContext) error, forward func(bizContext BusinessTransactionContext) error) error {
-	ctx = zipkin.NewContext(context.Background(), zipkin.SpanFromContext(ctx))
-	span, _ = TRACER.StartSpanFromContext(ctx, "Start SECONDBASER Follower First Stage")
-	span.Tag("SECONDBASER", "First Stage Follower")
-	SetLogFormat(ctx)
-
 	//Load business context from context
 	metaDataCtx, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return errors.New("unable to get metadata from context")
 	}
+
+	ctx = zipkin.NewContext(context.Background(), zipkin.SpanFromContext(ctx))
+	span, _ = TRACER.StartSpanFromContext(ctx, "Start SECONDBASER Follower First Stage")
+	span.Tag("SECONDBASER", "First Stage Follower")
+	SetLogFormat(ctx)
 
 	trxContextGroup := metaDataCtx["secondbaser-biz-trx-context"]
 	if trxContextGroup == nil || len(trxContextGroup) < 1 || trxContextGroup[0] == "" {
