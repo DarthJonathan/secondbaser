@@ -17,6 +17,7 @@ import (
 var span zipkin.Span
 
 func FollowTransactionTemplate(ctx context.Context, process func() error, rollback func(bizContext BusinessTransactionContext) error, forward func(bizContext BusinessTransactionContext) error) error {
+	ctx = zipkin.NewContext(context.Background(), zipkin.SpanFromContext(ctx))
 	span, _ = TRACER.StartSpanFromContext(ctx, "Start SECONDBASER Follower First Stage")
 	span.Tag("SECONDBASER", "First Stage Follower")
 	SetLogFormat(ctx)
@@ -70,12 +71,12 @@ func FollowTransactionTemplate(ctx context.Context, process func() error, rollba
 
 	//Load kafka
 	topic := SECONDBASER_PREFIX_TOPIC + businessTrxContext.BusinessType + "_" + businessTrxContext.Initiator
-	go listenToKafkaMsg(topic, businessTrxContext.TransactionId, rollback, forward)
+	go listenToKafkaMsg(ctx, topic, businessTrxContext.TransactionId, rollback, forward)
 
 	return err
 }
 
-func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext BusinessTransactionContext) error, forward func(bizContext BusinessTransactionContext) error) {
+func listenToKafkaMsg(ctx context.Context, topic string, trxId string, rollback func(bizContext BusinessTransactionContext) error, forward func(bizContext BusinessTransactionContext) error) {
 	LOGGER.Debugf("[KAFKA] Waiting for final phase [Topic : %s]", topic)
 
 	// make a new reader that consumes from topic-A
@@ -88,7 +89,7 @@ func listenToKafkaMsg(topic string, trxId string, rollback func(bizContext Busin
 	})
 
 	for {
-		m, err := r.ReadMessage(context.Background())
+		m, err := r.ReadMessage(ctx)
 		if err != nil {
 			LOGGER.Errorf("[KAFKA] Unable start reader, err : %+v", err)
 			break

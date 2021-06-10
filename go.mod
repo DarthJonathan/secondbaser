@@ -13,7 +13,7 @@ require (
 	github.com/prometheus/client_golang v1.10.0
 	github.com/segmentio/kafka-go v0.4.16
 	github.com/tkanos/gonfig v0.0.0-20210106201359-53e13348de2f
-	github.com/trakkie-id/kafka-zipkin-interceptor v0.0.0-20210609204035-83b7b67da2ae // indirect
+	github.com/trakkie-id/kafka-zipkin-interceptor v0.0.0-20210610032848-38a3273d7742 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20210601080250-7ecdf8ef093b // indirect
 	google.golang.org/grpc v1.38.0
