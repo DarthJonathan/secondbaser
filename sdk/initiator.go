@@ -71,7 +71,7 @@ func TransactionInitTemplate(ctx context.Context, t *zipkin.Tracer, businessType
 			//Update database
 			DB.Where(&model.Transaction{TransactionId: trxId}).Updates(
 				&model.Transaction{
-					TransactionStatus: model.TRX_COMMIT,
+					TransactionStatus: model.TRX_ROLLBACK,
 				})
 		}()
 		return processErr
