@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: trakkie-orders
-  namespace: trakkie-prod
+  name: secondbaser
+  namespace: trakkie-production
 spec:
   selector:
-    app: trakkie-orders
+    app: secondbaser
   ports:
     - name: grpc
       port: 3030
@@ -15,26 +15,26 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: trakkie-orders
-  namespace: trakkie-prod
+  name: secondbaser
+  namespace: trakkie-production
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: trakkie-orders
+      app: secondbaser
   template:
     metadata:
       annotations:
-        prometheus.io/path: '/actuator/prometheus'
-        prometheus.io/port: '20215'
+        prometheus.io/path: '/prometheus'
+        prometheus.io/port: '3050'
         prometheus.io/scheme: 'http'
         prometheus.io/scrape: 'true'
       labels:
-        app: trakkie-orders
+        app: secondbaser
     spec:
       containers:
-        - name: trakkie-orders
-          image: asia.gcr.io/trakkie-id/trakkie_orders:snapshot
+        - name: secondbaser
+          image: asia.gcr.io/trakkie-id/secondbaser:latest
           args: ["production"]
           ports:
             - containerPort: 3030
@@ -47,14 +47,14 @@ spec:
               subPath: production.json
           resources:
             requests:
+              memory: "32Mi"
+              cpu: "25m"
+            limits:
               memory: "64Mi"
               cpu: "50m"
-            limits:
-              memory: "512Mi"
-              cpu: "150m"
       volumes:
         - name: application-env
           configMap:
-            name: trakkie-orders-config-map
+            name: secondbaser-config-map
       imagePullSecrets:
         - name: trakkie-secret
